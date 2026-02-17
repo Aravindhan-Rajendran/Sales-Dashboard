@@ -10,16 +10,27 @@ from data import get_leads, get_sales, LEAD_STATUSES
 
 app = FastAPI(title="Sales Dashboard API")
 
-# For production: set CORS_ORIGINS to your Vercel URL, e.g. https://your-app.vercel.app
+# CORS: set CORS_ORIGINS to your Vercel URL (e.g. https://sales-dashboard-ten-green.vercel.app)
+# or set to * to allow any origin (no credentials).
 _origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
-if os.environ.get("CORS_ORIGINS"):
-    _origins.extend(o.strip() for o in os.environ["CORS_ORIGINS"].split(","))
+_cors_origins = os.environ.get("CORS_ORIGINS", "").strip()
+if _cors_origins:
+    if _cors_origins == "*":
+        _origins = ["*"]
+        _credentials = False
+    else:
+        # Normalize: browser sends Origin without trailing slash, so strip it for match
+        _origins.extend(o.strip().rstrip("/") for o in _cors_origins.split(",") if o.strip())
+        _credentials = True
+else:
+    _credentials = True
 app.add_middleware(
     CORSMiddleware,
     allow_origins=_origins,
-    allow_credentials=True,
+    allow_credentials=_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 
