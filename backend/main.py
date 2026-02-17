@@ -2,17 +2,21 @@
 FastAPI backend for Sales Dashboard.
 Exposes aggregated KPIs, lead status counts, and sales trend data.
 """
+import os
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
-from typing import List
 
 from data import get_leads, get_sales, LEAD_STATUSES
 
 app = FastAPI(title="Sales Dashboard API")
 
+# For production: set CORS_ORIGINS to your Vercel URL, e.g. https://your-app.vercel.app
+_origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+if os.environ.get("CORS_ORIGINS"):
+    _origins.extend(o.strip() for o in os.environ["CORS_ORIGINS"].split(","))
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

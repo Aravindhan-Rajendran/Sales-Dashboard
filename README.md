@@ -85,6 +85,84 @@ frontend/
 README.md
 ```
 
+---
+
+## GitHub & Deploy (Vercel)
+
+### 1. Push to GitHub
+
+From the project root (`d:\New folder (4)` or wherever the repo lives):
+
+```bash
+git init
+git add .
+git commit -m "Initial commit: Sales Dashboard (React + FastAPI)"
+```
+
+Create a new repository on [GitHub](https://github.com/new) (do **not** add a README or .gitignore there). Then:
+
+```bash
+git remote add origin https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+git branch -M main
+git push -u origin main
+```
+
+Replace `YOUR_USERNAME` and `YOUR_REPO_NAME` with your GitHub username and repo name.
+
+### 2. Deploy frontend to Vercel
+
+1. Go to [vercel.com](https://vercel.com) and sign in (e.g. with GitHub).
+2. Click **Add New** → **Project** and import your GitHub repo.
+3. **Root Directory**: set to `frontend` (so Vercel builds the React app).
+4. **Build settings** (usually auto-detected):
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+   - Install Command: `npm install`
+5. **Environment variables** (optional for a live backend):
+   - Name: `VITE_API_URL`  
+   - Value: your backend URL + `/api`, e.g. `https://your-backend.onrender.com/api`  
+   (If you leave this empty, the dashboard will load but API calls will fail until you deploy the backend.)
+6. Click **Deploy**. Vercel will give you a URL like `https://your-project.vercel.app`.
+
+### 3. Deploy backend (so the live dashboard has data)
+
+Vercel hosts the frontend only. To have a working live dashboard, deploy the backend somewhere that runs Python (e.g. **Render** or **Railway**).
+
+**Option A – Render (free tier)**
+
+1. Go to [render.com](https://render.com) and sign in with GitHub.
+2. **New** → **Web Service**, connect your repo.
+3. Settings:
+   - **Root Directory**: `backend`
+   - **Runtime**: Python 3
+   - **Build**: `pip install -r requirements.txt`
+   - **Start**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+4. **Environment**: add `CORS_ORIGINS` = your Vercel URL (e.g. `https://your-project.vercel.app`).
+5. Deploy. Copy the service URL (e.g. `https://your-app.onrender.com`).
+
+Then in **Vercel** (frontend project) → **Settings** → **Environment Variables**, set:
+
+- `VITE_API_URL` = `https://your-app.onrender.com/api`  
+Redeploy the frontend so it uses this URL.
+
+**Option B – Railway**
+
+1. Go to [railway.app](https://railway.app), sign in with GitHub, **New Project** → **Deploy from GitHub** and select your repo.
+2. Set **Root Directory** to `backend`, add a start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`.
+3. In **Variables**, add `CORS_ORIGINS` = your Vercel URL.
+4. After deploy, copy the public URL and set `VITE_API_URL` in Vercel to `https://your-app.railway.app/api`, then redeploy the frontend.
+
+### Summary
+
+| What        | Where   | URL / env                          |
+|------------|---------|-------------------------------------|
+| Frontend   | Vercel  | e.g. `https://your-project.vercel.app` |
+| Backend    | Render / Railway | e.g. `https://your-app.onrender.com` |
+| Frontend env | Vercel → `VITE_API_URL` | `https://your-backend-url/api` |
+| Backend env  | Render / Railway → `CORS_ORIGINS` | Your Vercel frontend URL |
+
+---
+
 ## Screenshots
 
 After running the app, capture screens of the dashboard for submission (KPI section, table, charts, and date filter).
