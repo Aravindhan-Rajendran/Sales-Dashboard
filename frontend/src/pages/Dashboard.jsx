@@ -38,7 +38,11 @@ export default function Dashboard() {
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 max-w-md text-center">
           <p className="text-red-700 font-medium">Something went wrong</p>
           <p className="text-red-600 text-sm mt-1">{error}</p>
-          <p className="text-slate-500 text-xs mt-3">Ensure the backend is running on port 8000.</p>
+          <ul className="text-slate-600 text-xs mt-3 text-left list-disc list-inside space-y-1">
+            <li>Backend (Render): set <code className="bg-white px-1 rounded">CORS_ORIGINS</code> to this site’s URL or <code className="bg-white px-1 rounded">*</code></li>
+            <li>Vercel: set <code className="bg-white px-1 rounded">VITE_API_URL</code> to your Render URL + <code className="bg-white px-1 rounded">/api</code></li>
+            <li>If using Render free tier, the backend may be sleeping — open your Render URL in a new tab first, then refresh.</li>
+          </ul>
         </div>
       </div>
     )

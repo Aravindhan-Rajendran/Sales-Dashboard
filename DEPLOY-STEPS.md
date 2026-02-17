@@ -37,7 +37,8 @@ Use these settings exactly:
 
 1. Scroll to **Environment Variables** → **Add Environment Variable**.
 2. **Key:** `CORS_ORIGINS`
-3. **Value:** Leave empty for now. You will add your Vercel URL here **after** Part 2.
+3. **Value:** Use **`*`** (a single asterisk) to allow your Vercel site (and any other) to call the API.  
+   Or use your exact Vercel URL later, e.g. `https://sales-dashboard-ten-green.vercel.app`
 4. Click **Create Web Service**.
 
 ### Step 1.5: Wait and copy backend URL
@@ -91,17 +92,17 @@ Use these settings exactly:
 
 ---
 
-## Part 3: Allow frontend in backend CORS (Render)
+## Part 3: Fix CORS (so the frontend can call the backend)
 
-So the browser can call your API from the Vercel URL:
+If you see “Failed to fetch” or “Something went wrong” on your Vercel site, the backend is blocking the request. Fix it on **Render**:
 
-1. Go back to **Render** → your **sales-dashboard-api** service.
+1. Go to **Render** → your backend service (e.g. **sales-dashboard-api**).
 2. Open **Environment** (left sidebar).
-3. Find **CORS_ORIGINS**.
-   - If you left it empty: click **Edit** and set **Value** to your **Vercel URL** (from Step 2.5).  
-     Example: `https://sales-dashboard-xxxx.vercel.app`
-   - If it already exists: add the same Vercel URL (Render may allow multiple values separated by comma).
-4. Click **Save Changes**. Render will **redeploy** the backend (wait 1–2 minutes).
+3. Find **CORS_ORIGINS**:
+   - **Easiest:** set **Value** to **`*`** (single asterisk). This allows any origin (your Vercel URL, preview URLs, etc.).
+   - **Or** set it to your exact Vercel URL, e.g. `https://sales-dashboard-ten-green.vercel.app` (no trailing slash).
+4. Click **Save Changes**. Render will **redeploy** (wait 1–2 minutes).
+5. If the backend was sleeping (Render free tier), open your **Render service URL** in a new tab first to wake it, then refresh your Vercel dashboard.
 
 ---
 
